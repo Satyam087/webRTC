@@ -25,14 +25,16 @@ app.get('/health', (_req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// Start server
-const start = async (): Promise<void> => {
-  await connectDatabase();
-  app.listen(env.PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${env.PORT}`);
-  });
-};
+// Start server — listen FIRST so Render detects the port, then connect DB
+const port = env.PORT;
 
-start().catch(console.error);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 Server running on http://0.0.0.0:${port}`);
+  
+  // Connect to database after server is listening
+  connectDatabase()
+    .then(() => console.log('✅ Database connected'))
+    .catch((err) => console.error('❌ Database connection failed:', err));
+});
 
 export default app;
