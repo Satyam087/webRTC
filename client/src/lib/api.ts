@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = "/api";
 
 interface CreateInterviewPayload {
   role: string;
@@ -33,7 +33,6 @@ export async function createInterview(
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.ADMIN_API_KEY}`
     },
     body: JSON.stringify(data),
   });
