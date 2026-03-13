@@ -8,8 +8,17 @@ import { errorHandler } from './middleware/errorHandler';
 const app = express();
 
 // Middleware
+const allowedOrigins = env.CLIENT_URL.split(',').map(s => s.trim());
+
 app.use(cors({
-  origin: env.CLIENT_URL,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (health checks, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.some(allowed => origin.startsWith(allowed) || allowed === '*')) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: Origin ${origin} not allowed`));
+  },
   credentials: true,
 }));
 app.use(express.json());
